@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Manager\MainController;
+use App\Http\Controllers\Manager\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+})->name('home');
+
+Route::prefix('manager')->group(function () {
+    Route::get('/', [MainController::class, 'index'])->name('manager.index');
+    Route::resource('/categories', CategoryController::class);
 });
