@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategory;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::paginate(2);
+        $categories = Category::Paginate(3);
         return view('manager.categories.index', compact('categories'));
     }
 
@@ -32,14 +33,17 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \App\Http\Requests\StoreCategory $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreCategory $request)
     {
-        $request->validate([
-            'title' => 'required',
-        ]);
+//        $request->validate([
+//            'title' => 'required',
+//        ]);
+
+        $validated = $request->safe()->only(['title']);
+
         Category::create($request->all());
 //        $request->session()->flash('success', 'Категория успешно создана!');
         return redirect()->route('categories.index')->with('success', 'Категория успешно создана!');
@@ -49,23 +53,32 @@ class CategoryController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
-        dd('EDIT');
+//        dd('stop');
+
+        $category = Category::find($id);
+        return view('manager.categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \App\Http\Requests\StoreCategory $request
+     * @param int $id
      */
-    public function update(Request $request, $id)
+    public function update(StoreCategory $request, $id)
     {
-        //
+        $validated = $request->safe()->only(['title']);
+
+        $category = Category::find($id);
+        $category->slug = null;
+        $category->update($request->all());
+
+        $request->session()->flash('success', 'Категория успешно изменена!');
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -76,6 +89,9 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        dd('DELETE');
+        /*$category = Category::find($id);
+        $category->delete();*/
+        Category::destroy($id);
+        return redirect()->route('categories.index')->with('success', 'Категория успешно удалена!');
     }
 }

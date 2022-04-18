@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Создание категории</h1>
+                    <h1>Редактирование категории</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -23,15 +23,16 @@
     <section class="content">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Создание категории</h3>
+                <h3 class="card-title">Категория "{{ $category->title }}"</h3>
             </div>
             <div class="card-body">
-                <form action="{{ route('categories.store') }}" method="post">
+                <form action="{{ route('categories.update', ['category' => $category->id]) }}" method="post">
                     @csrf
+                    @method('put')
                     <label for="title">Название категории:</label>
                     <input type="text" class="form-control @error('title') is-invalid @enderror" id="title"
-                           name="title">
-                    <button type="submit" class="btn btn-primary mt-5">Создать</button>
+                           name="title" value="{{ $category->title }}">
+                    <button type="submit" class="btn btn-primary mt-5">Изменить</button>
                 </form>
             </div>
         </div>
