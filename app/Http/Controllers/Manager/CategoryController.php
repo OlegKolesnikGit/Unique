@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -14,29 +15,34 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = [];
+        $categories = Category::paginate(2);
         return view('manager.categories.index', compact('categories'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function create()
     {
-        //
+        return view('manager.categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+        ]);
+        Category::create($request->all());
+//        $request->session()->flash('success', 'Категория успешно создана!');
+        return redirect()->route('categories.index')->with('success', 'Категория успешно создана!');
     }
 
     /**
@@ -47,7 +53,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        dd('EDIT');
     }
 
     /**
@@ -70,6 +76,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        dd('DELETE');
     }
 }
